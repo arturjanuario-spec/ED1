@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <time.h>
+
+int main() {
+    int opt;
+    char evt[500];
+    do {
+        printf("1-Registrar 2-Sair: ");
+        scanf("%d", &opt);
+        if (opt == 1) {
+            printf("Evento: ");
+            scanf("%s", evt);
+            FILE *f = fopen("game_log.txt", "a");
+            if (f) {
+                time_t t = time(NULL);
+                fprintf(f, "[%ld] %s\n", t, evt);
+                fclose(f);
+            }
+        }
+    } while (opt != 2);
+    return 0;
+}
