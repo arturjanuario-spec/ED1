@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+typedef struct {
+    char nome[50];
+    int hp, atk;
+} Campeao;
+
+int main() {
+    FILE *f = fopen("squad.dat", "rb");
+    if (!f) return printf("Erro ao abrir squad.dat\n"), 1;
+    Campeao c[3];
+    fread(c, sizeof(Campeao), 3, f);
+    fclose(f);
+    int tank = 0;
+    for (int i = 1; i < 3; i++)
+        if (c[i].hp > c[tank].hp) tank = i;
+    printf("%s: Tanque do esquadrao.\n", c[tank].nome);
+    return 0;
+}
