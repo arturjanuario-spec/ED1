@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+typedef struct {
+    int id;
+    int pontuacao;
+} Jogador;
+
+void troca(Jogador *a, Jogador *b) {
+    Jogador temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int particao(Jogador v[], int inicio, int fim) {
+    int pivo = v[fim].pontuacao;
+    int j = inicio - 1;
+
+    for (int i = inicio; i < fim; i++) {
+        // ORDEM DECRESCENTE: maior vem primeiro
+        if (v[i].pontuacao > pivo) {
+            j++;
+            troca(&v[j], &v[i]);
+        }
+    }
+
+    troca(&v[j + 1], &v[fim]);
+    return j + 1;
+}
+
+void quickSort(Jogador v[], int inicio, int fim) {
+    if (inicio < fim) {
+        int p = particao(v, inicio, fim);
+
+        quickSort(v, inicio, p - 1);
+        quickSort(v, p + 1, fim);
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    Jogador v[n];
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d %d", &v[i].id, &v[i].pontuacao);
+    }
+
+    quickSort(v, 0, n - 1);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d %d\n", v[i].id, v[i].pontuacao);
+    }
+
+    return 0;
+}
