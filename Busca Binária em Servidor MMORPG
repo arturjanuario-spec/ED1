@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+typedef struct {
+    int id, rep;
+    char nick[50];
+} Jogador;
+
+int buscaBin(Jogador j[], int n, int alvo) {
+    int l = 0, r = n - 1;
+    while (l <= r) {
+        int m = (l + r) / 2;
+        if (j[m].id == alvo) return m;
+        if (j[m].id < alvo) l = m + 1;
+        else r = m - 1;
+    }
+    return -1;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    Jogador j[n];
+    for (int i = 0; i < n; i++) scanf("%d %s %d", &j[i].id, j[i].nick, &j[i].rep);
+    int opt;
+    do {
+        scanf("%d", &opt);
+        if (opt == 1) {
+            int id;
+            scanf("%d", &id);
+            int idx = buscaBin(j, n, id);
+            if (idx != -1) {
+                j[idx].rep += 100;
+                printf("Nickname: %s, Nova Reputacao: %d\n", j[idx].nick, j[idx].rep);
+            } else printf("Jogador com ID %d nao encontrado.\n", id);
+        }
+    } while (opt != 2);
+    return 0;
+}
