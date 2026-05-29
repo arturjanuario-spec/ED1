@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    FILE *f = fopen("level_1_map.dat", "r");
+    if (!f) {
+        printf("ERRO CRITICO: Nao foi possivel carregar os dados do mapa.\n");
+        perror("Detalhes do erro");
+        exit(1);
+    }
+    fclose(f);
+    return 0;
+}
