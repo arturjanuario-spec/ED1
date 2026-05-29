@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+typedef struct {
+    int id, pts;
+} Competitor;
+
+void bubbleStruct(Competitor c[], int n) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (c[j].pts < c[j + 1].pts) {
+                Competitor t = c[j]; c[j] = c[j + 1]; c[j + 1] = t;
+            }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    Competitor c[n];
+    for (int i = 0; i < n; i++) scanf("%d %d", &c[i].id, &c[i].pts);
+    bubbleStruct(c, n);
+    for (int i = 0; i < n; i++) printf("%d %d\n", c[i].id, c[i].pts);
+    return 0;
+}
