@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+typedef struct {
+    char nome[50];
+    int nivel, hs;
+} Perfil;
+
+int main() {
+    FILE *f = fopen("profiles.dat", "rb");
+    if (!f) return printf("Erro: profiles.dat nao encontrado\n"), 1;
+    Perfil p;
+    int i = 1;
+    while (fread(&p, sizeof(Perfil), 1, f)) {
+        char *rank = p.hs > 10000 ? "Mestre" : (p.hs > 5000 ? "Veterano" : "Aspirante");
+        printf("%d: %s - Rank: %s\n", i++, p.nome, rank);
+    }
+    fclose(f);
+    return 0;
+}
