@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int main() {
+    int placar[5] = {120, 125, 130, 142, 150};
+    int novo;
+    scanf("%d", &novo);
+    for (int i = 0; i < 5; i++) {
+        if (novo < placar[i]) {
+            for (int j = 4; j > i; j--) placar[j] = placar[j - 1];
+            placar[i] = novo;
+            break;
+        }
+    }
+    for (int i = 0; i < 5; i++) printf("%d%c", placar[i], i < 4 ? ' ' : '\n');
+    return 0;
+}
