@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+typedef struct {
+    char nome[50];
+    int vida, atk;
+} Criatura;
+
+int main() {
+    FILE *f = fopen("wave_data.txt", "r");
+    if (!f) return printf("Erro: wave_data.txt nao encontrado\n"), 1;
+    Criatura c, forte = {"", -1, -1};
+    while (fscanf(f, "%s %d %d", c.nome, &c.vida, &c.atk) != EOF)
+        if (c.atk > forte.atk) forte = c;
+    fclose(f);
+    printf("Maior Ameaca: %s, Vida: %d, Ataque: %d\n", forte.nome, forte.vida, forte.atk);
+    return 0;
+}
