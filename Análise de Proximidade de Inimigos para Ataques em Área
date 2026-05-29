@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    int x, y;
+} Ponto;
+
+int main() {
+    int n, cnt = 0;
+    float r;
+    scanf("%d", &n);
+    Ponto *p = malloc(n * sizeof(Ponto));
+    for (int i = 0; i < n; i++) scanf("%d %d", &p[i].x, &p[i].y);
+    scanf("%f", &r);
+    for (int i = 0; i < n; i++)
+        for (int j = i + 1; j < n; j++) {
+            float d = hypot(p[j].x - p[i].x, p[j].y - p[i].y);
+            if (d <= r) cnt++;
+        }
+    printf("%d\n", cnt);
+    free(p);
+    return 0;
+}
