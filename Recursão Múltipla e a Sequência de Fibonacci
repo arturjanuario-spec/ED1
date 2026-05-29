@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+typedef struct {
+    int id, hp, atk;
+    char nome[50];
+} Besta;
+
+int buscaRec(Besta b[], int l, int r, int alvo) {
+    if (l > r) return -1;
+    int m = (l + r) / 2;
+    if (b[m].id == alvo) return m;
+    return alvo < b[m].id ? buscaRec(b, l, m - 1, alvo) : buscaRec(b, m + 1, r, alvo);
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    Besta b[n];
+    for (int i = 0; i < n; i++) scanf("%d %s %d %d", &b[i].id, b[i].nome, &b[i].hp, &b[i].atk);
+    int id;
+    while (scanf("%d", &id) && id != 0) {
+        int idx = buscaRec(b, 0, n - 1, id);
+        if (idx != -1)
+            printf("Monstro Encontrado: %s (ID: %d) - HP: %d, Ataque: %d\n", b[idx].nome, b[idx].id, b[idx].hp, b[idx].atk);
+        else printf("Monstro com ID %d nao encontrado.\n", id);
+    }
+    return 0;
+}
