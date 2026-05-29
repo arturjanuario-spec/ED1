@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int res_x, res_y;
+    float vol;
+} Config;
+
+int main() {
+    FILE *f = fopen("config.txt", "r");
+    if (!f) {
+        printf("Erro: Arquivo config.txt nao encontrado!\n");
+        return 1;
+    }
+    Config cfg;
+    fscanf(f, "%d %d %f", &cfg.res_x, &cfg.res_y, &cfg.vol);
+    fclose(f);
+    printf("Configuracoes carregadas:\nResolucao: %dx%d\nVolume: %.1f\n", 
+           cfg.res_x, cfg.res_y, cfg.vol);
+    return 0;
+}
