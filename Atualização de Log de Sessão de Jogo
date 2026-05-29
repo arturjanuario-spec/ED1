@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+typedef struct {
+    int id, xp;
+} Conquista;
+
+int main() {
+    FILE *f = fopen("player_log.txt", "r+");
+    if (!f) return printf("Erro ao abrir player_log.txt\n"), 1;
+    int n, total = 0;
+    fscanf(f, "%d", &n);
+    for (int i = 0; i < n; i++) {
+        Conquista c;
+        fscanf(f, "%d %d", &c.id, &c.xp);
+        total += c.xp;
+    }
+    printf("Total de pontos: %d\n", total);
+    fseek(f, 0, SEEK_END);
+    fprintf(f, "\n--- SESSION CONCLUDED ---");
+    fclose(f);
+    return 0;
+}
