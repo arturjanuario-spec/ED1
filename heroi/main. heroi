@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include "heroi/heroi.h"
+
+int main()
+{
+    int quantidade;
+
+    printf("Quantos herois tera a equipe? ");
+    scanf("%d", &quantidade);
+
+    Heroi* roster = criar_roster(quantidade);
+
+    if (roster == NULL)
+    {
+        printf("Erro de memoria!\n");
+        return 1;
+    }
+
+    ler_herois(roster, quantidade);
+    imprimir_herois(roster, quantidade);
+
+    liberar_roster(roster);
+
+    return 0;
+}
