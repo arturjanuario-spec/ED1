@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char descricao[100];
+} Etapa;
+
+typedef struct no {
+    Etapa dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+No* criarNo(Etapa e) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = e;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserirFim(Lista *l, Etapa e) {
+    No *novo = criarNo(e);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrar(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nNenhuma etapa cadastrada!\n");
+        return;
+    }
+
+    printf("\n===== ETAPAS DA MISSÃO =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Descrição: %s\n",
+               atual->dado.id,
+               atual->dado.descricao);
+
+        atual = atual->prox;
+    }
+}
+
+void deletar_antes(Lista *l, int id_ref) {
+
+    if (l->inicio == NULL) {
+        printf("Lista vazia!\n");
+        return;
+    }
+
+    No *ant_ant = NULL; // anterior do anterior
+    No *ant = l->inicio;
+    No *atual = l->inicio->prox;
+
+    if (ant->dado.id == id_ref) {
+        printf("Não há etapa antes da primeira!\n");
+        return;
+    }
+
+    if (atual != NULL && atual->dado.id == id_ref) {
+        l->inicio = ant->prox;
+        printf("Etapa removida: %s\n", ant->dado.descricao);
+        free(ant);
+        return;
+    }
+
+    while (atual != NULL && atual->dado.id != id_ref) {
+        ant_ant = ant;
+        ant = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) {
+        printf("Etapa de referência não encontrada!\n");
+        return;
+    }
+
+    if (ant_ant == NULL) {
+        // significa que o anterior ao alvo é o primeiro nó
+        l->inicio = atual;
+    } else {
+        ant_ant->prox = atual;
+    }
+
+    printf("Etapa removida: %s\n", ant->dado.descricao);
+    free(ant);
+}
+
+int main() {
+    Lista lista;
+    Etapa e;
+    int opcao, id;
+
+    inicializar(&lista);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Inserir etapa no fim\n");
+        printf("2 - Mostrar etapas\n");
+        printf("3 - Deletar etapa ANTES de ID\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID: ");
+                scanf("%d", &e.id);
+
+                printf("Descrição: ");
+                scanf(" %[^\n]", e.descricao);
+
+                inserirFim(&lista, e);
+                break;
+
+            case 2:
+                mostrar(&lista);
+                break;
+
+            case 3:
+                printf("ID de referência: ");
+                scanf("%d", &id);
+
+                deletar_antes(&lista, id);
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    return 0;
+}
