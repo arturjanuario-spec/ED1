@@ -1,0 +1,11 @@
+int tamanho(Lista *l) {
+    No *atual = l->inicio;
+    int cont = 0;
+
+    while (atual != NULL) {
+        cont++;
+        atual = atual->prox;
+    }
+
+    return cont;
+}
