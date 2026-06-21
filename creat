@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nome[50];
+    int custo_mana;
+} Feitico;
+
+typedef struct no {
+    Feitico dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *topo;
+} Pilha;
+
+void inicializar(Pilha *p) {
+    p->topo = NULL;
+}
+
+void push(Pilha *p, Feitico f) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    novo->dado = f;
+    novo->prox = p->topo;
+    p->topo = novo;
+}
+
+void mostrar_pilha(Pilha *p) {
+    No *aux = p->topo;
+
+    if (aux == NULL) {
+        printf("A pilha de comandos esta vazia.\n");
+        return;
+    }
+
+    printf("\n=== PILHA DE COMANDOS (TOPO -> BASE) ===\n");
+
+    while (aux != NULL) {
+        printf("Feitico: %s | Custo de Mana: %d\n",
+               aux->dado.nome,
+               aux->dado.custo_mana);
+
+        aux = aux->prox;
+    }
+}
+
+void liberar_pilha(Pilha *p) {
+    No *aux = p->topo;
+
+    while (aux != NULL) {
+        No *temp = aux;
+        aux = aux->prox;
+        free(temp);
+    }
+
+    p->topo = NULL;
+}
+
+int main() {
+
+    Pilha p;
+    inicializar(&p);
+
+    int opcao;
+
+    do {
+        printf("\n=== ARCANISTA ===\n");
+        printf("1 - Adicionar feitico\n");
+        printf("2 - Mostrar pilha de comandos\n");
+        printf("3 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+        getchar();
+
+        if (opcao == 1) {
+            Feitico f;
+
+            printf("Nome do feitico: ");
+            fgets(f.nome, 50, stdin);
+            f.nome[strcspn(f.nome, "\n")] = '\0';
+
+            printf("Custo de mana: ");
+            scanf("%d", &f.custo_mana);
+            getchar();
+
+            push(&p, f);
+
+            printf("Feitico adicionado na pilha!\n");
+        }
+
+        else if (opcao == 2) {
+            mostrar_pilha(&p);
+        }
+
+    } while (opcao != 3);
+
+    liberar_pilha(&p);
+
+    printf("Sistema encerrado.\n");
+
+    return 0;
+}
