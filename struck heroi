@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nome[50];
+} Heroi;
+
+typedef struct no {
+    Heroi dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+No* criarNo(Heroi h) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = h;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserirFim(Lista *l, Heroi h) {
+    No *novo = criarNo(h);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void inserirAntes(Lista *l, Heroi novoHeroi, int idVIP) {
+
+    No *novo = criarNo(novoHeroi);
+
+    if (l->inicio == NULL) {
+        printf("Lista vazia! Não é possível inserir antes.\n");
+        free(novo);
+        return;
+    }
+
+    if (l->inicio->dado.id == idVIP) {
+        novo->prox = l->inicio;
+        l->inicio = novo;
+        printf("Inserido antes do VIP (no início)!\n");
+        return;
+    }
+
+    No *ant = l->inicio;
+    No *atual = l->inicio->prox;
+
+    while (atual != NULL && atual->dado.id != idVIP) {
+        ant = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) {
+        printf("VIP não encontrado! Inserção cancelada.\n");
+        free(novo);
+        return;
+    }
+
+    ant->prox = novo;
+    novo->prox = atual;
+
+    printf("Guarda-costas inserido antes do VIP!\n");
+}
+
+void mostrar(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nFormação vazia!\n");
+        return;
+    }
+
+    printf("\n===== FORMAÇÃO DE BATALHA =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s\n", atual->dado.id, atual->dado.nome);
+        atual = atual->prox;
+    }
+}
+
+void liberar(Lista *l) {
+    No *atual = l->inicio;
+
+    while (atual != NULL) {
+        No *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    Lista time;
+    Heroi h;
+    int opcao, idVIP;
+
+    inicializar(&time);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar herói no fim\n");
+        printf("2 - Inserir antes (Guarda-Costas)\n");
+        printf("3 - Mostrar formação\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID: ");
+                scanf("%d", &h.id);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", h.nome);
+
+                inserirFim(&time, h);
+                break;
+
+            case 2:
+                printf("ID do guarda-costas: ");
+                scanf("%d", &h.id);
+
+                printf("Nome do guarda-costas: ");
+                scanf(" %[^\n]", h.nome);
+
+                printf("ID do VIP: ");
+                scanf("%d", &idVIP);
+
+                inserirAntes(&time, h, idVIP);
+                break;
+
+            case 3:
+                mostrar(&time);
+                break;
+
+            case 4:
+                printf("Encerrando programa...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    liberar(&time);
+
+    return 0;
+}
