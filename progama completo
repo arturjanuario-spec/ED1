@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nome[100];
+    int nivel;
+} Membro;
+
+typedef struct no {
+    Membro dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+void inserir_fim(Lista *l, Membro m) {
+    No *novo = (No*)malloc(sizeof(No));
+    novo->dado = m;
+    novo->prox = NULL;
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrar_guilda(Lista l) {
+    No *atual = l.inicio;
+
+    if (atual == NULL) {
+        printf("Guilda vazia!\n");
+        return;
+    }
+
+    printf("\n=== GUILDA ===\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s | Nivel: %d\n",
+               atual->dado.id,
+               atual->dado.nome,
+               atual->dado.nivel);
+
+        atual = atual->prox;
+    }
+}
+
+void salvar_guilda_teste() {
+    FILE *f = fopen("guild_roster.b", "wb");
+    if (f == NULL) return;
+
+    Membro v[3] = {
+        {1, "Arthur", 10},
+        {2, "Luna", 15},
+        {3, "Drake", 20}
+    };
+
+    for (int i = 0; i < 3; i++) {
+        fwrite(&v[i], sizeof(Membro), 1, f);
+    }
+
+    fclose(f);
+}
+
+Lista carregar_guilda() {
+    Lista l;
+    inicializar(&l);
+
+    FILE *f = fopen("guild_roster.b", "rb");
+
+    if (f == NULL) {
+        printf("Erro ao abrir arquivo!\n");
+        return l;
+    }
+
+    Membro m;
+
+    while (fread(&m, sizeof(Membro), 1, f) == 1) {
+        inserir_fim(&l, m);
+    }
+
+    fclose(f);
+
+    return l;
+}
+
+int main() {
+
+    salvar_guilda_teste();
+
+    Lista lista = carregar_guilda();
+
+    mostrar_guilda(lista);
+
+    return 0;
+}
