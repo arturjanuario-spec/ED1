@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    char nome[50];
+} Movimento;
+
+typedef struct no {
+    Movimento dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializarLista(Lista *lista) {
+    lista->inicio = NULL;
+}
+
+void inserirInicio(Lista *lista, Movimento mov) {
+    No *novo = (No *)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro ao alocar memória!\n");
+        return;
+    }
+
+    novo->dado = mov;
+    novo->prox = lista->inicio;
+    lista->inicio = novo;
+
+    printf("Movimento inserido com sucesso!\n");
+}
+
+void liberarLista(Lista *lista) {
+    No *atual = lista->inicio;
+
+    while (atual != NULL) {
+        No *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    Lista combo;
+    Movimento mov;
+    int opcao;
+
+    inicializarLista(&combo);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Inserir novo movimento\n");
+        printf("2 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+            case 1:
+                printf("ID do movimento: ");
+                scanf("%d", &mov.id);
+
+                printf("Nome do movimento: ");
+                scanf(" %[^\n]", mov.nome);
+
+                inserirInicio(&combo, mov);
+                break;
+
+            case 2:
+                printf("Encerrando programa...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 2);
+
+    liberarLista(&combo);
+
+    return 0;
+}
