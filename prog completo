@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id; // nível de ameaça
+    char nome[50];
+} Monstro;
+
+typedef struct no {
+    Monstro dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+No* criarNo(Monstro m) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = m;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void adicionarMonstro(Lista *l, Monstro m) {
+    No *novo = criarNo(m);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrarBestiario(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nBestiário vazio!\n");
+        return;
+    }
+
+    printf("\n===== BESTIÁRIO =====\n");
+
+    while (atual != NULL) {
+        printf("ID (Ameaça): %d | Nome: %s\n",
+               atual->dado.id,
+               atual->dado.nome);
+
+        atual = atual->prox;
+    }
+}
+
+// Bubble Sort na lista (troca de dados)
+void ordenarBestiario(Lista *l) {
+    if (l->inicio == NULL) return;
+
+    int trocou;
+    No *p;
+    Monstro temp;
+
+    do {
+        trocou = 0;
+        p = l->inicio;
+
+        while (p->prox != NULL) {
+
+            if (p->dado.id > p->prox->dado.id) {
+
+                // troca os dados
+                temp = p->dado;
+                p->dado = p->prox->dado;
+                p->prox->dado = temp;
+
+                trocou = 1;
+            }
+
+            p = p->prox;
+        }
+
+    } while (trocou);
+}
