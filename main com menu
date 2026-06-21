@@ -1,0 +1,49 @@
+int main() {
+    Lista lista;
+    Monstro m;
+    int opcao;
+
+    inicializar(&lista);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar monstro\n");
+        printf("2 - Ordenar bestiário\n");
+        printf("3 - Mostrar bestiário\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID (ameaça): ");
+                scanf("%d", &m.id);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", m.nome);
+
+                adicionarMonstro(&lista, m);
+                break;
+
+            case 2:
+                ordenarBestiario(&lista);
+                printf("Bestiário ordenado!\n");
+                break;
+
+            case 3:
+                mostrarBestiario(&lista);
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    return 0;
+}
