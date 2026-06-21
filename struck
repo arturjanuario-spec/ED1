@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int matricula;
+    char nome[50];
+} Jogador;
+
+typedef struct no {
+    Jogador dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Fila;
+
+void inicializar(Fila *f) {
+    f->inicio = NULL;
+}
+
+No* criarNo(Jogador j) {
+    No *novo = (No *)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = j;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+// Inserir no início (prioridade)
+void inserirInicio(Fila *f, Jogador j) {
+    No *novo = criarNo(j);
+
+    novo->prox = f->inicio;
+    f->inicio = novo;
+
+    printf("Jogador inserido no início (prioridade)!\n");
+}
+
+// Inserir no fim (principal)
+void inserirFim(Fila *f, Jogador j) {
+    No *novo = criarNo(j);
+
+    if (f->inicio == NULL) {
+        f->inicio = novo;
+    } else {
+        No *atual = f->inicio;
+
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+
+        atual->prox = novo;
+    }
+
+    printf("Jogador inserido no fim da fila!\n");
+}
+
+void mostrarFila(Fila *f) {
+    No *atual = f->inicio;
+
+    if (atual == NULL) {
+        printf("\nFila vazia!\n");
+        return;
+    }
+
+    printf("\n===== FILA DE JOGADORES =====\n");
+
+    while (atual != NULL) {
+        printf("Matrícula: %d | Nome: %s\n",
+               atual->dado.matricula,
+               atual->dado.nome);
+
+        atual = atual->prox;
+    }
+}
+
+void liberarFila(Fila *f) {
+    No *atual = f->inicio;
+
+    while (atual != NULL) {
+        No *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    Fila fila;
+    Jogador j;
+    int opcao;
+
+    inicializar(&fila);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar no início (prioridade)\n");
+        printf("2 - Adicionar no fim\n");
+        printf("3 - Mostrar fila\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+            case 1:
+                printf("Matrícula: ");
+                scanf("%d", &j.matricula);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", j.nome);
+
+                inserirInicio(&fila, j);
+                break;
+
+            case 2:
+                printf("Matrícula: ");
+                scanf("%d", &j.matricula);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", j.nome);
+
+                inserirFim(&fila, j);
+                break;
+
+            case 3:
+                mostrarFila(&fila);
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    liberarFila(&fila);
+
+    return 0;
+}
