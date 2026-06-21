@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nome[100];
+} Ward;
+
+typedef struct no {
+    Ward dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+No* criarNo(Ward w) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = w;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserirFim(Lista *l, Ward w) {
+    No *novo = criarNo(w);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrar(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nNenhum ward ativo!\n");
+        return;
+    }
+
+    printf("\n===== WARDS ATIVOS =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s\n", atual->dado.id, atual->dado.nome);
+        atual = atual->prox;
+    }
+}
+
+void deletar_apos(Lista *l, int id_ref) {
+
+    if (l->inicio == NULL) {
+        printf("Lista vazia!\n");
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual != NULL && atual->dado.id != id_ref) {
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) {
+        printf("Ward de referência não encontrado!\n");
+        return;
+    }
+
+    if (atual->prox == NULL) {
+        printf("O ward de referência é o último. Nada para destruir!\n");
+        return;
+    }
+
+    No *remover = atual->prox;
+
+    atual->prox = remover->prox;
+
+    printf("Ward '%s' destruído pelo Ward Shatter!\n", remover->dado.nome);
+
+    free(remover);
+}
+
+int main() {
+    Lista lista;
+    Ward w;
+    int opcao, id_ref;
+
+    inicializar(&lista);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar Ward\n");
+        printf("2 - Ward Shatter\n");
+        printf("3 - Mostrar Wards\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID: ");
+                scanf("%d", &w.id);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", w.nome);
+
+                inserirFim(&lista, w);
+                break;
+
+            case 2:
+                printf("ID do ward de referência: ");
+                scanf("%d", &id_ref);
+
+                deletar_apos(&lista, id_ref);
+                break;
+
+            case 3:
+                mostrar(&lista);
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    return 0;
+}
