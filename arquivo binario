@@ -1,0 +1,21 @@
+void salvar_guild_arquivo(Lista lista) {
+    FILE *arq = fopen("guild_roster.bin", "wb");
+
+    if (arq == NULL) {
+        printf("Erro ao abrir arquivo!\n");
+        return;
+    }
+
+    No *atual = lista.inicio;
+
+    while (atual != NULL) {
+
+        fwrite(&atual->dado, sizeof(Membro), 1, arq);
+
+        atual = atual->prox;
+    }
+
+    fclose(arq);
+
+    printf("Guilda salva com sucesso em guild_roster.bin!\n");
+}
