@@ -1,0 +1,31 @@
+void deletar_fim(Lista *plista) {
+
+    // Caso 1: lista vazia
+    if (plista->inicio == NULL) {
+        printf("Não é possível remover: lista vazia.\n");
+        return;
+    }
+
+    No *atual = plista->inicio;
+    No *anterior = NULL;
+
+    // Caso 2: apenas um elemento
+    if (atual->prox == NULL) {
+        printf("Removendo último jogador: %s\n", atual->dado.nome);
+        free(atual);
+        plista->inicio = NULL;
+        return;
+    }
+
+    // Caso 3: mais de um elemento
+    while (atual->prox != NULL) {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    // 'atual' é o último nó, 'anterior' é o penúltimo
+    printf("Removendo último jogador: %s\n", atual->dado.nome);
+
+    anterior->prox = NULL;
+    free(atual);
+}
