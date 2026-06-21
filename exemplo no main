@@ -1,0 +1,28 @@
+int main() {
+    Lista lista;
+    inicializar(&lista);
+
+    int opcao, n;
+
+    do {
+        printf("\n1 - Nova onda\n2 - Sair\n");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("Quantos inimigos na nova onda? ");
+                scanf("%d", &n);
+
+                lista = criar_lista(n); // substitui a lista antiga
+                break;
+
+            case 2:
+                printf("Saindo...\n");
+                break;
+        }
+
+    } while(opcao != 2);
+
+    return 0;
+}
