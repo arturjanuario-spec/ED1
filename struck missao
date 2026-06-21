@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char titulo[50];
+    char status[30];
+} Missao;
+
+typedef struct no {
+    Missao dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *lista) {
+    lista->inicio = NULL;
+}
+
+No* criarNo(Missao m) {
+    No *novo = (No *)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = m;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void adicionarMissao(Lista *lista, Missao m) {
+    No *novo = criarNo(m);
+
+    if (lista->inicio == NULL) {
+        lista->inicio = novo;
+    } else {
+        No *atual = lista->inicio;
+
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+
+        atual->prox = novo;
+    }
+
+    printf("Missão adicionada!\n");
+}
+
+void mostrarMissoes(Lista *lista) {
+    No *atual = lista->inicio;
+
+    if (atual == NULL) {
+        printf("\nNenhuma missão cadastrada!\n");
+        return;
+    }
+
+    printf("\n===== DIÁRIO DE MISSÕES =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d\n", atual->dado.id);
+        printf("Título: %s\n", atual->dado.titulo);
+        printf("Status: %s\n\n", atual->dado.status);
+
+        atual = atual->prox;
+    }
+}
+
+No* pesquisar_missao(Lista *lista, int id) {
+    No *atual = lista->inicio;
+
+    while (atual != NULL) {
+        if (atual->dado.id == id) {
+            return atual;
+        }
+        atual = atual->prox;
+    }
+
+    return NULL;
+}
+
+void liberar(Lista *lista) {
+    No *atual = lista->inicio;
+
+    while (atual != NULL) {
+        No *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    Lista diario;
+    Missao m;
+    int opcao, idBusca;
+
+    inicializar(&diario);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar Missão\n");
+        printf("2 - Mostrar Missões\n");
+        printf("3 - Buscar Missão por ID\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID da missão: ");
+                scanf("%d", &m.id);
+
+                printf("Título: ");
+                scanf(" %[^\n]", m.titulo);
+
+                printf("Status: ");
+                scanf(" %[^\n]", m.status);
+
+                adicionarMissao(&diario, m);
+                break;
+
+            case 2:
+                mostrarMissoes(&diario);
+                break;
+
+            case 3:
+                printf("Digite o ID da missão: ");
+                scanf("%d", &idBusca);
+
+                {
+                    No *resultado = pesquisar_missao(&diario, idBusca);
+
+                    if (resultado != NULL) {
+                        printf("\nMissão encontrada!\n");
+                        printf("ID: %d\n", resultado->dado.id);
+                        printf("Título: %s\n", resultado->dado.titulo);
+                        printf("Status: %s\n", resultado->dado.status);
+                    } else {
+                        printf("Missao nao encontrada!\n");
+                    }
+                }
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    liberar(&diario);
+
+    return 0;
+}
