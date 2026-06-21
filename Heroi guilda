@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nome[50];
+} Heroi;
+
+typedef struct no {
+    Heroi dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+No* criarNo(Heroi h) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = h;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserir(Lista *l, Heroi h) {
+    No *novo = criarNo(h);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrar(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nGuilda vazia!\n");
+        return;
+    }
+
+    printf("\n===== GUILDA =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s\n", atual->dado.id, atual->dado.nome);
+        atual = atual->prox;
+    }
+}
+
+void dispensar_heroi(Lista *l, int id) {
+
+    if (l->inicio == NULL) {
+        printf("A guilda está vazia!\n");
+        return;
+    }
+
+    No *atual = l->inicio;
+    No *anterior = NULL;
+
+    if (atual->dado.id == id) {
+        l->inicio = atual->prox;
+        printf("Herói %s dispensado!\n", atual->dado.nome);
+        free(atual);
+        return;
+    }
+
+    while (atual != NULL && atual->dado.id != id) {
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) {
+        printf("Herói com ID %d não encontrado!\n", id);
+        return;
+    }
+
+    anterior->prox = atual->prox;
+
+    printf("Herói %s dispensado!\n", atual->dado.nome);
+
+    free(atual);
+}
+
+void liberar(Lista *l) {
+    No *atual = l->inicio;
+
+    while (atual != NULL) {
+        No *temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    Lista guilda;
+    Heroi h;
+    int opcao, id;
+
+    inicializar(&guilda);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar herói\n");
+        printf("2 - Mostrar heróis\n");
+        printf("3 - Dispensar herói\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID: ");
+                scanf("%d", &h.id);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", h.nome);
+
+                inserir(&guilda, h);
+                break;
+
+            case 2:
+                mostrar(&guilda);
+                break;
+
+            case 3:
+                printf("ID do herói a dispensar: ");
+                scanf("%d", &id);
+
+                dispensar_heroi(&guilda, id);
+
+                mostrar(&guilda); // mostra atualizado
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    liberar(&guilda);
+
+    return 0;
+}
