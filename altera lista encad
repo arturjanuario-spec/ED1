@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nome[100];
+} Membro;
+
+typedef struct no {
+    Membro dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+} Lista;
+
+void inicializar(Lista *l) {
+    l->inicio = NULL;
+}
+
+// Criar nó
+No* criarNo(Membro m) {
+    No *novo = (No*)malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memória!\n");
+        exit(1);
+    }
+
+    novo->dado = m;
+    novo->prox = NULL;
+
+    return novo;
+}
+
+void inserir_fim(Lista *l, Membro m) {
+    No *novo = criarNo(m);
+
+    if (l->inicio == NULL) {
+        l->inicio = novo;
+        return;
+    }
+
+    No *atual = l->inicio;
+
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+
+    atual->prox = novo;
+}
+
+void mostrar_lista(Lista *l) {
+    No *atual = l->inicio;
+
+    if (atual == NULL) {
+        printf("\nGuilda vazia!\n");
+        return;
+    }
+
+    printf("\n===== MEMBROS DA GUILDA =====\n");
+
+    while (atual != NULL) {
+        printf("ID: %d | Nome: %s\n",
+               atual->dado.id,
+               atual->dado.nome);
+
+        atual = atual->prox;
+    }
+}
+
+No* pesquisar(Lista *l, int id) {
+    No *atual = l->inicio;
+
+    while (atual != NULL && atual->dado.id != id) {
+        atual = atual->prox;
+    }
+
+    return atual; // retorna NULL se não encontrar
+}
+
+void alterar_nome(Lista *l, int id, char novo_nome[]) {
+
+    No *membro = pesquisar(l, id);
+
+    if (membro == NULL) {
+        printf("Membro com ID %d não encontrado!\n", id);
+        return;
+    }
+
+    strcpy(membro->dado.nome, novo_nome);
+
+    printf("Nome alterado com sucesso!\n");
+}
+
+int main() {
+    Lista lista;
+    Membro m;
+    int opcao, id;
+    char novo_nome[100];
+
+    inicializar(&lista);
+
+    do {
+        printf("\n===== MENU =====\n");
+        printf("1 - Adicionar membro\n");
+        printf("2 - Mostrar lista\n");
+        printf("3 - Alterar nome\n");
+        printf("4 - Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+
+            case 1:
+                printf("ID: ");
+                scanf("%d", &m.id);
+
+                printf("Nome: ");
+                scanf(" %[^\n]", m.nome);
+
+                inserir_fim(&lista, m);
+                break;
+
+            case 2:
+                mostrar_lista(&lista);
+                break;
+
+            case 3:
+                printf("ID do membro: ");
+                scanf("%d", &id);
+
+                printf("Novo nome: ");
+                scanf(" %[^\n]", novo_nome);
+
+                alterar_nome(&lista, id, novo_nome);
+                break;
+
+            case 4:
+                printf("Encerrando...\n");
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 4);
+
+    return 0;
+}
