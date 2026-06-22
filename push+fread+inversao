@@ -1,0 +1,21 @@
+void carregar_pilha_de_arquivo(Pilha *p, const char *nome_arquivo) {
+
+    FILE *file = fopen(nome_arquivo, "rb");
+
+    if (file == NULL) {
+        printf("Nenhum grimorio encontrado, iniciando com pilha vazia.\n");
+        return;
+    }
+
+    Feitico temp;
+
+    while (fread(&temp, sizeof(Feitico), 1, file) == 1) {
+        push(p, temp);
+    }
+
+    fclose(file);
+
+    inverter_pilha(p);
+
+    printf("Grimorio carregado com sucesso!\n");
+}
