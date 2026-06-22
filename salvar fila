@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    char nickname[50];
+} Jogador;
+
+typedef struct no {
+    Jogador dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+    No *fim;
+} Fila;
+
+void salvarFila(Fila *f, const char *nomeArquivo) {
+
+    FILE *file = fopen(nomeArquivo, "wb");
+
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    No *aux = f->inicio;
+
+    while (aux != NULL) {
+
+        fwrite(&aux->dado, sizeof(Jogador), 1, file);
+
+        aux = aux->prox;
+    }
+
+    fclose(file);
+
+    printf("Fila salva com sucesso em '%s'!\n", nomeArquivo);
+}
