@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nome[50];
+    int custo_mana;
+} Feitico;
+
+typedef struct no {
+    Feitico dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *topo;
+} Pilha;
+
+void inicializar(Pilha *p) {
+    p->topo = NULL;
+}
+
+// Verificar se está vazia
+int vazia(Pilha *p) {
+    return (p->topo == NULL);
+}
+
+void push(Pilha *p, Feitico f) {
+    No *novo = (No*) malloc(sizeof(No));
+
+    novo->dado = f;
+    novo->prox = p->topo;
+    p->topo = novo;
+}
+
+Feitico pop(Pilha *p) {
+
+    Feitico erro;
+    erro.custo_mana = -1;
+    strcpy(erro.nome, "");
+
+    if (vazia(p)) {
+        printf("Pilha vazia!\n");
+        return erro;
+    }
+
+    No *remover = p->topo;
+    Feitico f = remover->dado;
+
+    p->topo = remover->prox;
+    free(remover);
+
+    return f;
+}
+
+// Inverter pilha
+void inverter_pilha(Pilha *p) {
+
+    if (vazia(p)) {
+        printf("Nao ha nada para inverter.\n");
+        return;
+    }
+
+    Pilha aux;
+    inicializar(&aux);
+
+    Feitico f;
+
+    while (!vazia(p)) {
+        f = pop(p);
+        push(&aux, f);
+    }
+
+    p->topo = aux.topo;
+
+    printf("Ordem dos feitiços invertida!\n");
+}
+
+// Mostrar pilha
+void mostrar_pilha(Pilha *p) {
+
+    if (vazia(p)) {
+        printf("Pilha vazia.\n");
+        return;
+    }
+
+    No *aux = p->topo;
+
+    printf("\n=== PILHA ===\n");
+
+    while (aux != NULL) {
+        printf("Feitico: %s | Mana: %d\n",
+               aux->dado.nome,
+               aux->dado.custo_mana);
+
+        aux = aux->prox;
+    }
+}
+
+int main() {
+
+    Pilha p;
+    inicializar(&p);
+
+    Feitico f;
+    int opcao;
+
+    do {
+
+        printf("\n=== ARCANISTA ===\n");
+        printf("1 - Adicionar feitico\n");
+        printf("2 - Mostrar pilha\n");
+        printf("3 - Inverter ordem dos feiticos\n");
+        printf("4 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d",&opcao);
+        getchar();
+
+        switch(opcao) {
+
+            case 1:
+
+                printf("Nome do feitico: ");
+                fgets(f.nome,50,stdin);
+                f.nome[strcspn(f.nome,"\n")] = '\0';
+
+                printf("Custo de mana: ");
+                scanf("%d",&f.custo_mana);
+                getchar();
+
+                push(&p,f);
+
+                break;
+
+            case 2:
+
+                mostrar_pilha(&p);
+
+                break;
+
+            case 3:
+
+                inverter_pilha(&p);
+
+                break;
+
+            case 4:
+
+                printf("Encerrando...\n");
+
+                break;
+
+            default:
+
+                printf("Opcao invalida!\n");
+
+        }
+
+    } while(opcao != 4);
+
+    return 0;
+}
