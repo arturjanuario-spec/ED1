@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char nickname[50];
+} Jogador;
+
+typedef struct no {
+    Jogador dado;
+    struct no *prox;
+} No;
+
+typedef struct {
+    No *inicio;
+    No *fim;
+} Fila;
+
+void inicializar(Fila *f) {
+    f->inicio = NULL;
+    f->fim = NULL;
+}
+
+void inserir(Fila *f, Jogador j) {
+
+    No *novo = (No*) malloc(sizeof(No));
+
+    if (novo == NULL) {
+        printf("Erro de memoria!\n");
+        return;
+    }
+
+    novo->dado = j;
+    novo->prox = NULL;
+
+    if (f->inicio == NULL) {
+        f->inicio = novo;
+        f->fim = novo;
+    } 
+    else {
+        // liga no final e atualiza fim
+        f->fim->prox = novo;
+        f->fim = novo;
+    }
+
+    printf("Jogador %s entrou na fila!\n", j.nickname);
+}
+
+void mostrar(Fila *f) {
+
+    if (f->inicio == NULL) {
+        printf("Fila vazia.\n");
+        return;
+    }
+
+    No *aux = f->inicio;
+
+    printf("\n=== FILA DE MATCHMAKING ===\n");
+
+    while (aux != NULL) {
+        printf("ID: %d | Nickname: %s\n",
+               aux->dado.id,
+               aux->dado.nickname);
+
+        aux = aux->prox;
+    }
+}
+
+int main() {
+
+    Fila f;
+    inicializar(&f);
+
+    int opcao;
+    Jogador j;
+
+    do {
+        printf("\n===== MATCHMAKING =====\n");
+        printf("1 - Inserir jogador\n");
+        printf("2 - Mostrar fila\n");
+        printf("3 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+        getchar();
+
+        switch(opcao) {
+
+            case 1:
+
+                printf("ID do jogador: ");
+                scanf("%d", &j.id);
+                getchar();
+
+                printf("Nickname: ");
+                fgets(j.nickname, 50, stdin);
+                j.nickname[strcspn(j.nickname, "\n")] = '\0';
+
+                inserir(&f, j);
+
+                break;
+
+            case 2:
+
+                mostrar(&f);
+
+                break;
+
+            case 3:
+
+                printf("Saindo...\n");
+
+                break;
+
+            default:
+
+                printf("Opcao invalida!\n");
+        }
+
+    } while (opcao != 3);
+
+    return 0;
+}
